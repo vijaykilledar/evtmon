@@ -11,8 +11,8 @@ enum class Net_Interface_Status {
 
 class NetInterface {
     private:
-    	std::string m_ipv4_addr;
-    	std::string m_ipv6_addr;
+        std::string m_ipv4_addr;
+        std::string m_ipv6_addr;
     public:
 };
 
