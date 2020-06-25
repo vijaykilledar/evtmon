@@ -1,0 +1,13 @@
+AC_PREREQ([2.68])
+AC_INIT([netevtmon], [0.0.1])
+AC_CONFIG_SRCDIR(src/netevtmond.cpp)
+AM_INIT_AUTOMAKE([subdir-objects 1.11 -Wall -Werror])
+AC_CONFIG_FILES([Makefile])
+
+AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_CPP
+AC_PROG_LN_S
+AC_PROG_RANLIB
+
+AC_OUTPUT
