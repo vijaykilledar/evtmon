@@ -1,10 +1,15 @@
- # Ignore all
- *
- #dont ignore subdirecory
- !*/
- # Above will ignore all files without extension
- #ignore *.o files
- *.o
- *.so
- *.a
- ~        
+/aclocal.m4
+/autom4te.cache
+compile
+config.log
+config.status
+configure
+depcomp
+src/.deps/
+netevtmond
+Makefile.in
+Makefile
+install-sh
+missing
+.dirstamp
+*.o
