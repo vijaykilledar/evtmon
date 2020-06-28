@@ -19,7 +19,7 @@ class NetInterface {
         const std::string& get_ipv4_addr();
         const std::string& get_ipv6_addr();
         const NetIntfStatus& get_link_status();
-        const m_link_admin_status& get_link_admin_status();
+        const NetIntfStatus& get_link_admin_status();
 };
 
 #endif // NET_INTERFACE_H

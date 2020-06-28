@@ -1,0 +1,19 @@
+{
+  "evt_monitors":[
+      {
+        "name":"netroute"
+      },
+      {
+        "name":"netconntrack"
+      },
+      {
+        "name":"netinterface"
+      }
+    ],
+    "evt_collectors":[
+      {
+        "name":"file",
+        "path":"/var/tmp/evt.out"
+      }
+    ]
+}

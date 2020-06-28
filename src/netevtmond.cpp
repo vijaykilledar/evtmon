@@ -12,9 +12,8 @@
 #include <vector>
 
 #include "netevtmond.h"
-#include "json.hpp"
-
-using json = nlohmann::json;
+#include "global.h"
+#include "dconfig.h"
 
 void do_heartbeat()
 {
@@ -71,7 +70,6 @@ int main(void)
 
     // Daemon-specific intialization should go here
     const int SLEEP_INTERVAL = 5;
-
     // Enter daemon loop
     while (1) {
       // Execute daemon heartbeat, where your recurring activity occurs

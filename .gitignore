@@ -1,0 +1,10 @@
+ # Ignore all
+ *
+ #dont ignore subdirecory
+ !*/
+ # Above will ignore all files without extension
+ #ignore *.o files
+ *.o
+ *.so
+ *.a
+ ~        

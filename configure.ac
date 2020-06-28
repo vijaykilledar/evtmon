@@ -23,16 +23,20 @@ AC_DEFUN(
                             enable_hook="yes"
                         fi
                    ])
+     AM_CONDITIONAL([BUILD_$1], [test "${enable_hook}" = "yes"])
      enable_$1="$enable_hook"
     ]
 )
 
 m4_divert_once([HELP_ENABLE], [netevtmond monitors:])
 
+AC_HOOK([netintfmon],                 [yes],      [network interface event monitoring.])
 AC_HOOK([netroutemon],                [yes],      [linux route event monitoring.])
 AC_HOOK([netconntrackemon],           [yes],      [linux conntrack event monitoring.])
 
 AC_MSG_RESULT()
+AC_MSG_RESULT([Configuration:])
 AC_MSG_RESULT([  Net Evt Monitors:])
+AC_MSG_RESULT([    netintfmon . . . . . . .   $enable_netintfmon])
 AC_MSG_RESULT([    netroutemon . . . . . . .  $enable_netroutemon])
 AC_MSG_RESULT([    netconntrackemon . . . . . $enable_netconntrackemon])
