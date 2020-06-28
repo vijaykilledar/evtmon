@@ -12,18 +12,27 @@ AC_PROG_RANLIB
 
 AC_OUTPUT
 
+dnl
+AC_DEFUN(
+    [AC_HOOK],
+    [
+     enable_hook="no"
+     AC_ARG_ENABLE([$1],
+                   [AS_HELP_STRING([--enable-$1],[$3])],
+                   [    if test "${enableval}" = "yes"; then
+                            enable_hook="yes"
+                        fi
+                   ])
+     enable_$1="$enable_hook"
+    ]
+)
+
 m4_divert_once([HELP_ENABLE], [netevtmond monitors:])
 
-AC_ARG_ENABLE(netroutemon,
-    [   --enable-netroutemon            Enables linux route event monitoring.],
-    [   if test "${enableval}" = "yes"; then
-            AC_DEFINE(ENABLE_NETROUTEMON)
-        fi
-    ])
+AC_HOOK([netroutemon],                [yes],      [linux route event monitoring.])
+AC_HOOK([netconntrackemon],           [yes],      [linux conntrack event monitoring.])
 
-AC_ARG_ENABLE(netconntrackemon,
-    [   --enable-netconntrackmon        Enables linux conntrack event monitoring.],
-    [   if test "${enableval}" = "yes"; then
-            AC_DEFINE(ENABLE_NETCONNTRACKMON)
-        fi
-    ])
+AC_MSG_RESULT()
+AC_MSG_RESULT([  Net Evt Monitors:])
+AC_MSG_RESULT([    netroutemon . . . . . . .  $enable_netroutemon])
+AC_MSG_RESULT([    netconntrackemon . . . . . $enable_netconntrackemon])

@@ -1,5 +1,5 @@
-#ifndef _INTF_EVT_MONITOR_H_
-#define _INTF_EVT_MONITOR_H_
+#ifndef _MONITOR_INTF_H_
+#define _MONITOR_INTF_H_
 
 #include<iostream.h>
 
@@ -13,4 +13,4 @@ class IntfEvtMonitor: public EventMonitor {
 
 };
 
-#endif // _INTF_EVT_MONITOR_H_
+#endif // _MONITOR_INTF_H_
