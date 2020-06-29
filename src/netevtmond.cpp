@@ -15,58 +15,86 @@
 #include "global.h"
 #include "dconfig.h"
 
-void do_heartbeat()
-{
+void do_heartbeat() {
 
 }
 
-int main(void) 
-{
-    pid_t pid, sid;
+int main(int argc, char *argv[]) {
+    
+    int opt;
+    bool is_daemon = true;
+    char *conf_file = nullptr;
 
-    pid = fork();
-
-    if (pid > 0) {
-      exit(EXIT_SUCCESS);
+    while ((opt = getopt(argc, argv, "fhc:")) != -1) {
+        switch (opt) {
+            case 'f':
+                is_daemon = false;
+                break;
+            case 'c':
+                conf_file = optarg;
+                break;
+            case '?':
+            case 'h':
+                fprintf(stderr, "Usage: %s \n -f\tdont fork\n-c\t config file path\n",argv[0]);
+                exit(EXIT_FAILURE);
+        }
     }
-    // A process ID lower than 0 indicates a failure in either process
-    else if (pid < 0) {
-      exit(EXIT_FAILURE);
-    }
-    // The parent process has now terminated, and the forked child process will continue
-    // (the pid of the child process was 0)
-    // Since the child process is a daemon, the umask needs to be set so files and logs can be written
-   
-    umask(0);
-    // Open system logs for the child process
-    openlog("netevtmond", LOG_NOWAIT | LOG_PID, LOG_USER);
-    syslog(LOG_NOTICE, "Successfully started netevtmond");
-    // Generate a session ID for the child process
-    sid = setsid();
-    // Ensure a valid SID for the child process
-    if (sid < 0) {
-        // Log failure and exit
-        syslog(LOG_ERR, "Could not generate session ID for child process");
 
-        // If a new session ID could not be generated, we must terminate the child process
-        // or it will be orphaned
+    //load config
+    bool config_load = DaemonConfig::instance().load_config((conf_file != nullptr) ? conf_file : CONF_FILE);
+    if(!config_load) {
+        syslog(LOG_ERR,"Failed to load config. Please check config file.");
         exit(EXIT_FAILURE);
     }
+    
+    if (is_daemon) {
+    
+        pid_t pid, sid;
+        pid = fork();
 
-    // Change the current working directory to a directory guaranteed to exist
-    if ((chdir("/")) < 0) {
-        // Log failure and exit
-        syslog(LOG_ERR, "Could not change working directory to /");
+        if (pid > 0) {
+          exit(EXIT_SUCCESS);
+        }
+        // A process ID lower than 0 indicates a failure in either process
+        else if (pid < 0) {
+          exit(EXIT_FAILURE);
+        }
+        // The parent process has now terminated, and the forked child process will continue
+        // (the pid of the child process was 0)
+        // Since the child process is a daemon, the umask needs to be set so files and logs can be written
+       
+        umask(0);
+        // Open system logs for the child process
+        openlog("netevtmond", LOG_NOWAIT | LOG_PID, LOG_USER);
+        syslog(LOG_NOTICE, "Successfully started netevtmond");
+        // Generate a session ID for the child process
+        sid = setsid();
+        // Ensure a valid SID for the child process
+        if (sid < 0) {
+            // Log failure and exit
+            syslog(LOG_ERR, "Could not generate session ID for child process");
 
-        // If our guaranteed directory does not exist, terminate the child process to ensure
-        // the daemon has not been hijacked
-        exit(EXIT_FAILURE);
+            // If a new session ID could not be generated, we must terminate the child process
+            // or it will be orphaned
+            exit(EXIT_FAILURE);
+        }
+
+        // Change the current working directory to a directory guaranteed to exist
+        if ((chdir("/")) < 0) {
+            // Log failure and exit
+            syslog(LOG_ERR, "Could not change working directory to /");
+
+            // If our guaranteed directory does not exist, terminate the child process to ensure
+            // the daemon has not been hijacked
+            exit(EXIT_FAILURE);
+        }
+
+        // A daemon cannot use the terminal, so close standard file descriptors for security reasons
+        close(STDIN_FILENO);
+        close(STDOUT_FILENO);
+        close(STDERR_FILENO);
     }
-
-    // A daemon cannot use the terminal, so close standard file descriptors for security reasons
-    close(STDIN_FILENO);
-    close(STDOUT_FILENO);
-    close(STDERR_FILENO);
+    
 
     // Daemon-specific intialization should go here
     const int SLEEP_INTERVAL = 5;

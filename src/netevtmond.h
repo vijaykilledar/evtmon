@@ -6,7 +6,7 @@
 #endif
 
 #ifndef CONF_FILE
-#define CONF_FILE   "/etc/" PACKAGE_NAME ".conf"
+#define CONF_FILE   "/etc/netevtmon.json"
 #endif
 
 #endif //_NETEVTMOND_H_
