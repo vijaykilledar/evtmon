@@ -2,6 +2,8 @@
 #define _MONITOR_INTF_H_
 
 #include<iostream>
+#include<map>
+#include <arpa/inet.h>
 #include <libmnl/libmnl.h>
 #include <linux/if.h>
 #include <linux/if_link.h>
@@ -9,6 +11,7 @@
 
 
 #include "evt_monitor.h"
+#include "net_interface.h"
 
 class IntfEvtMonitor: public EventMonitor {
     private:
@@ -22,6 +25,8 @@ class IntfEvtMonitor: public EventMonitor {
         virtual void handle_event(){};
         virtual bool init();
         virtual bool start(){};
+        static int parse_link_status_msg(const struct nlmsghdr *nlh, void *data);
+        static int parse_link_attr(const struct nlattr *attr, void *data);
         static IntfEvtMonitor& instance() {
             static IntfEvtMonitor instance;
             return instance;
