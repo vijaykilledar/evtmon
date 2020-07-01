@@ -17,6 +17,58 @@ bool IntfEvtMonitor::init() {
     return ret;
 }
 
+bool IntfEvtMonitor::init_interface_data() {
+    request_link_info();
+    request_link_ipaddr(AF_INET);
+    request_link_ipaddr(AF_INET6);
+}
+
+bool IntfEvtMonitor::request_link_info() {
+    char buf[MNL_SOCKET_BUFFER_SIZE];
+    struct nlmsghdr *nlh;
+    struct rtgenmsg *rt;
+    unsigned int seq;
+
+    nlh = mnl_nlmsg_put_header(buf);
+    nlh->nlmsg_type = RTM_GETLINK;
+    nlh->nlmsg_flags = NLM_F_REQUEST | NLM_F_DUMP;
+    nlh->nlmsg_seq = seq = time(NULL);
+
+    rt = (struct rtgenmsg *)mnl_nlmsg_put_extra_header(nlh, sizeof(struct rtgenmsg));
+    rt->rtgen_family = AF_PACKET;
+
+    bool ret = true;
+
+    if (mnl_socket_sendto(*m_mnlsock, nlh, nlh->nlmsg_len) < 0) {
+        ret = false;
+    }
+    return ret;
+}
+ 
+bool IntfEvtMonitor::request_link_ipaddr(unsigned char rtgen_family) {
+    char buf[MNL_SOCKET_BUFFER_SIZE];
+    struct nlmsghdr *nlh;
+    struct rtgenmsg *rt;
+    unsigned int seq;
+
+    nlh = mnl_nlmsg_put_header(buf);
+    nlh->nlmsg_type = RTM_GETADDR;
+    nlh->nlmsg_flags = NLM_F_REQUEST | NLM_F_DUMP;
+    nlh->nlmsg_seq = seq = time(NULL);
+
+    rt = (struct rtgenmsg *)mnl_nlmsg_put_extra_header(nlh, sizeof(struct rtgenmsg));
+
+    rt->rtgen_family = rtgen_family;
+
+    bool ret = true;
+   
+    if (mnl_socket_sendto(*m_mnlsock, nlh, nlh->nlmsg_len) < 0) {
+        ret = false;
+    }
+    
+    return ret;
+}
+
 int IntfEvtMonitor::parse_link_attr(const struct nlattr *attr, void *data)
 {
      const struct nlattr **tb  = (const struct nlattr **)data;

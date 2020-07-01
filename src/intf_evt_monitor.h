@@ -27,6 +27,9 @@ class IntfEvtMonitor: public EventMonitor {
         virtual bool start(){};
         static int parse_link_status_msg(const struct nlmsghdr *nlh, void *data);
         static int parse_link_attr(const struct nlattr *attr, void *data);
+        bool request_link_info();
+        bool request_link_ipaddr(unsigned char rtgen_family);
+        bool init_interface_data();
         static IntfEvtMonitor& instance() {
             static IntfEvtMonitor instance;
             return instance;
