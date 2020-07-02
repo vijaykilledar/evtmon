@@ -1,13 +1,16 @@
 {
   "evt_monitors":[
       {
-        "name":"netroute"
-      },
-      {
-        "name":"netconntrack"
-      },
-      {
-        "name":"netinterface"
+        "name":"netinterface",
+        "events":[
+            "LINK_STATUS_EVENT",
+            "IP_CHANGE_EVENT",
+            "ALL"
+        ],
+        "intf_filter":[
+            "eth0",
+            "eth1"
+        ]
       }
     ],
     "evt_collectors":[
