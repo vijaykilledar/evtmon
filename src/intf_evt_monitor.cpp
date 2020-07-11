@@ -2,17 +2,17 @@
 
 bool IntfEvtMonitor::init() {
     bool ret = false;
-    *m_mnlsock = mnl_socket_open2(NETLINK_ROUTE,  SOCK_NONBLOCK);
-    if(*m_mnlsock == NULL) {
-        //logger::log("Error: mnl_socket_open()");
+    m_mnlsock = mnl_socket_open2(NETLINK_ROUTE,  SOCK_NONBLOCK);
+    if(m_mnlsock == NULL) {
+	    std::cout<<"Error: mnl_socket_open()\n";
         return ret;
     }
-    int rv = mnl_socket_bind(*m_mnlsock, RTMGRP_LINK, MNL_SOCKET_AUTOPID);
+    int rv = mnl_socket_bind(m_mnlsock, RTMGRP_LINK, MNL_SOCKET_AUTOPID);
     if(rv < 0) {
         //logger::log("Error: mnl_socket_bind");
         return ret;
     }
-    m_mnl_fd = mnl_socket_get_fd(*m_mnlsock);
+    m_mnl_fd = mnl_socket_get_fd(m_mnlsock);
     ret = true;
     return ret;
 }
@@ -39,7 +39,7 @@ bool IntfEvtMonitor::request_link_info() {
 
     bool ret = true;
 
-    if (mnl_socket_sendto(*m_mnlsock, nlh, nlh->nlmsg_len) < 0) {
+    if (mnl_socket_sendto(m_mnlsock, nlh, nlh->nlmsg_len) < 0) {
         ret = false;
     }
     return ret;
@@ -62,7 +62,7 @@ bool IntfEvtMonitor::request_link_ipaddr(unsigned char rtgen_family) {
 
     bool ret = true;
    
-    if (mnl_socket_sendto(*m_mnlsock, nlh, nlh->nlmsg_len) < 0) {
+    if (mnl_socket_sendto(m_mnlsock, nlh, nlh->nlmsg_len) < 0) {
         ret = false;
     }
     
@@ -102,6 +102,7 @@ int IntfEvtMonitor::parse_link_status_msg(const struct nlmsghdr *nlh, void *data
      std::string intf;
      if(tb[IFLA_IFNAME]) {
          intf = mnl_attr_get_str(tb[IFLA_IFNAME]);
+         std::cout<<intf<<"\n";
      } else {
          return MNL_CB_OK;
      }
@@ -113,9 +114,17 @@ int IntfEvtMonitor::parse_link_status_msg(const struct nlmsghdr *nlh, void *data
      return MNL_CB_OK;
 }
 
-void IntfEvtMonitor::operator() () {
+void netinterface_start() {
+    IntfEvtMonitor::instance().init();
+    IntfEvtMonitor::instance().start();
+}
+
+bool IntfEvtMonitor::start () {
+	std::cout<<__FUNCTION__<<"\n";
     fd_set rfds;
+    init_interface_data();
     while(1) {
+	std::cout<<"in while"<<"\n";
         FD_ZERO(&rfds);
         FD_SET(m_mnl_fd, &rfds);
         struct timeval tv;
@@ -134,13 +143,13 @@ void IntfEvtMonitor::operator() () {
         if(FD_ISSET(m_mnl_fd, &rfds)) {
             char buf[MNL_SOCKET_BUFFER_SIZE];
             int ret;
-            ret = mnl_socket_recvfrom(*m_mnlsock, buf, sizeof(buf));
+            ret = mnl_socket_recvfrom(m_mnlsock, buf, sizeof(buf));
             while(ret > 0) {
                 ret = mnl_cb_run(buf, ret, 0, 0, IntfEvtMonitor::parse_link_status_msg, NULL);
                 if(ret <= 0) {
                     break;
                 }
-                ret = mnl_socket_recvfrom(*m_mnlsock, buf, sizeof(buf));
+                ret = mnl_socket_recvfrom(m_mnlsock, buf, sizeof(buf));
             }
         }
     }

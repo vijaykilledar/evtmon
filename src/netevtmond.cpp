@@ -10,11 +10,12 @@
 #include <syslog.h>
 #include <unistd.h>
 #include <vector>
+#include <thread>
 
 #include "netevtmond.h"
 #include "global.h"
 #include "dconfig.h"
-
+#include "intf_evt_monitor.h"
 void do_heartbeat() {
 
 }
@@ -95,7 +96,7 @@ int main(int argc, char *argv[]) {
         close(STDERR_FILENO);
     }
     
-
+    std::thread test_t(netinterface_start);
     // Daemon-specific intialization should go here
     const int SLEEP_INTERVAL = 5;
     // Enter daemon loop

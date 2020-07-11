@@ -5,6 +5,8 @@ netevtmond_SOURCES += src/dconfig.cpp
 
 netevtmond_LDADD = -lmnl
 
+AM_CXXFLAGS=-g -std=c++11 -pthread
+
 if BUILD_netintfmon
 netevtmond_SOURCES += src/intf_evt_monitor.cpp
 netevtmond_SOURCES += src/net_interface.cpp
