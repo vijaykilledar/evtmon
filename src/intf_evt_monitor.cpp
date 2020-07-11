@@ -4,12 +4,10 @@ bool IntfEvtMonitor::init() {
     bool ret = false;
     m_mnlsock = mnl_socket_open2(NETLINK_ROUTE,  SOCK_NONBLOCK);
     if(m_mnlsock == NULL) {
-	    std::cout<<"Error: mnl_socket_open()\n";
         return ret;
     }
     int rv = mnl_socket_bind(m_mnlsock, RTMGRP_LINK, MNL_SOCKET_AUTOPID);
     if(rv < 0) {
-        //logger::log("Error: mnl_socket_bind");
         return ret;
     }
     m_mnl_fd = mnl_socket_get_fd(m_mnlsock);
@@ -102,7 +100,6 @@ int IntfEvtMonitor::parse_link_status_msg(const struct nlmsghdr *nlh, void *data
      std::string intf;
      if(tb[IFLA_IFNAME]) {
          intf = mnl_attr_get_str(tb[IFLA_IFNAME]);
-         std::cout<<intf<<"\n";
      } else {
          return MNL_CB_OK;
      }
@@ -120,11 +117,9 @@ void netinterface_start() {
 }
 
 bool IntfEvtMonitor::start () {
-	std::cout<<__FUNCTION__<<"\n";
     fd_set rfds;
     init_interface_data();
     while(1) {
-	std::cout<<"in while"<<"\n";
         FD_ZERO(&rfds);
         FD_SET(m_mnl_fd, &rfds);
         struct timeval tv;
