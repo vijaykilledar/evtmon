@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include "dconfig.h"
-#include "global.h"
 
 DaemonConfig& DaemonConfig::instance() {
     static DaemonConfig insta;
@@ -11,7 +10,6 @@ DaemonConfig& DaemonConfig::instance() {
 
 bool DaemonConfig::load_config(const char* conf_file) {
     std::ifstream infile(conf_file);
-    json j;
-    infile >> j;
+    infile >> m_config;
     return true;
 }

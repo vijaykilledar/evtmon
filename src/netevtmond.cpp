@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     }
 
     //load config
-    bool config_load = DaemonConfig::instance().load_config((conf_file != nullptr) ? conf_file : CONF_FILE);
+    bool config_load = config.load_config((conf_file != nullptr) ? conf_file : CONF_FILE);
     if(!config_load) {
         syslog(LOG_ERR,"Failed to load config. Please check config file.");
         exit(EXIT_FAILURE);
@@ -96,7 +96,6 @@ int main(int argc, char *argv[]) {
         close(STDERR_FILENO);
     }
     
-    std::thread test_t(netinterface_start);
     // Daemon-specific intialization should go here
     const int SLEEP_INTERVAL = 5;
     // Enter daemon loop

@@ -1,7 +1,7 @@
 {
   "evt_monitors":[
       {
-        "name":"netinterface",
+        "name":"netintfmon",
         "events":[
             "LINK_STATUS_EVENT",
             "IP_CHANGE_EVENT",
