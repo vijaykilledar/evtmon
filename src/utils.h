@@ -3,19 +3,20 @@
  
 #include <iostream>
 #include <string>
-#include <time.h>
+#include <ctime>
  
 namespace Util
 {
     // Get current date/time, format is YYYY-MM-DD.HH:mm:ss
     const std::string CurrentDateTime()
     {
-        time_t     now = time(NULL);
-        struct tm  tstruct;
-        char       buf[80];
-        localtime_s(&tstruct, &now);
-        strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-        return buf;
+        std::time_t rawtime;
+        std::tm* timeinfo;
+        char buffer [80];
+        std::time(&rawtime);
+        timeinfo = std::localtime(&rawtime);
+        std::strftime(buffer,80,"%Y-%m-%d-%H-%M-%S",timeinfo);
+        return buffer;
     }
 }
 #endif // _UTILIS_H

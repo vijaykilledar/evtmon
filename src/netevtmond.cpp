@@ -16,6 +16,8 @@
 #include "global.h"
 #include "dconfig.h"
 #include "intf_evt_monitor.h"
+#include "logger.h"
+
 void do_heartbeat() {
 
 }
@@ -36,7 +38,7 @@ int main(int argc, char *argv[]) {
                 break;
             case '?':
             case 'h':
-                fprintf(stderr, "Usage: %s \n -f\tdont fork\n-c\t config file path\n",argv[0]);
+                fprintf(stdout,"Usage: %s \n -f\tdont fork\n-c\t config file path\n",argv[0]);
                 exit(EXIT_FAILURE);
         }
     }

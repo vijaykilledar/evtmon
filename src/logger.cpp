@@ -1,4 +1,6 @@
+#include<stdarg.h>
 #include "logger.h"
+#include "utils.h"
 
 const std::string Logger::m_priority_names[] = {
     "DEBUG",
@@ -6,3 +8,15 @@ const std::string Logger::m_priority_names[] = {
     "WARNING",
     "ERROR",
 };
+
+void Logger::write(m_priority pri, const char  *msg, ...) {
+    va_list arg;
+    int done;
+    char buffer[256];
+    va_start (arg, msg);
+    vsnprintf (buffer, 255, msg, arg);
+    std::string new_msg = Util::CurrentDateTime() + ":" + m_priority_names[pri] + ": " + buffer;
+    done = fprintf (stdout, new_msg.c_str(), arg);
+    va_end (arg);
+
+}
