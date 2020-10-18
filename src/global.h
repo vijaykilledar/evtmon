@@ -2,6 +2,7 @@
 #define _GLOBAL_H_
 
 #include <iostream>
+#include <string>
 
 #include "json.hpp"
 

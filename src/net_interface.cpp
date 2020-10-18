@@ -30,3 +30,7 @@ void NetInterface::set_ipv6_addr(const std::string &val) {
 void NetInterface::set_ipv4_addr(const std::string &val) {
     m_ipv4_addr = val;
 }
+
+void NetInterface::set_link_status(const NetIntfStatus &val) {
+    m_link_status = val;
+}

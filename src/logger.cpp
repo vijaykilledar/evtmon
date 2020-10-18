@@ -9,13 +9,13 @@ const std::string Logger::m_priority_names[] = {
     "ERROR",
 };
 
-void Logger::write(m_priority pri, const char  *msg, ...) {
+void Logger::write(logtype pri, const char  *msg, ...) {
     va_list arg;
     int done;
     char buffer[256];
     va_start (arg, msg);
     vsnprintf (buffer, 255, msg, arg);
-    std::string new_msg = Util::CurrentDateTime() + ":" + m_priority_names[pri] + ": " + buffer;
+    std::string new_msg = Util::CurrentDateTime() + ":" + m_priority_names[static_cast<int>(pri)] + ": " + buffer + "\n";
     done = fprintf (stdout, new_msg.c_str(), arg);
     va_end (arg);
 

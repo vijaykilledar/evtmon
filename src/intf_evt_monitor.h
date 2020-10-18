@@ -1,8 +1,8 @@
 #ifndef _MONITOR_INTF_H_
 #define _MONITOR_INTF_H_
 
-#include<iostream>
-#include<map>
+#include <iostream>
+#include <map>
 #include <arpa/inet.h>
 #include <libmnl/libmnl.h>
 #include <linux/if.h>
@@ -23,6 +23,10 @@ class IntfEvtMonitor: public EventMonitor {
         IntfEvtMonitor(IntfEvtMonitor const& copy);
         IntfEvtMonitor& operator=(IntfEvtMonitor const& copy);
     public:
+        std::map<std::string, NetInterface *> m_intf;
+        void new_interface(std::string intf) {
+            m_intf[intf] = new NetInterface(intf);
+        }
         virtual void handle_event(){};
         virtual bool init();
         virtual bool start();

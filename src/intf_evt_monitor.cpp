@@ -1,4 +1,5 @@
 #include "intf_evt_monitor.h"
+#include "logger.h"
 
 bool IntfEvtMonitor::init() {
     bool ret = false;
@@ -100,10 +101,11 @@ int IntfEvtMonitor::parse_link_status_msg(const struct nlmsghdr *nlh, void *data
      std::string intf;
      if(tb[IFLA_IFNAME]) {
          intf = mnl_attr_get_str(tb[IFLA_IFNAME]);
+         IntfEvtMonitor::instance().new_interface(intf);
      } else {
          return MNL_CB_OK;
      }
- 
+     LOG(logtype::DEBUG, "msg received interface %s", intf.c_str());
      if(ifm->ifi_flags & IFF_RUNNING) {
      } else {
      }

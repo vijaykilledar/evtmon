@@ -17,6 +17,9 @@ class NetInterface {
         NetIntfStatus m_link_status;
         NetIntfStatus m_link_admin_status;
     public:
+        NetInterface(std::string intf_name) {
+            m_intf_name = intf_name;
+        }
         const std::string& get_ipv4_addr();
         const std::string& get_intf_name();
         const std::string& get_ipv6_addr();
@@ -25,6 +28,7 @@ class NetInterface {
         void set_intf_name(const std::string &val);
         void set_ipv6_addr(const std::string &val);
         void set_ipv4_addr(const std::string &val);
+        void set_link_status(const NetIntfStatus &val);
 };
 
 #endif // NET_INTERFACE_H
