@@ -18,8 +18,14 @@
 #include "intf_evt_monitor.h"
 #include "logger.h"
 
+std::map<std::string, EventMonitor *> g_evt_monitors;
+
 void do_heartbeat() {
 
+}
+
+void config_daemon() {
+    json conf = DaemonConfig::instance().get_config();
 }
 
 int main(int argc, char *argv[]) {
@@ -100,6 +106,9 @@ int main(int argc, char *argv[]) {
     
     // Daemon-specific intialization should go here
     const int SLEEP_INTERVAL = 5;
+    
+    config_daemon();
+
     // Enter daemon loop
     while (1) {
       // Execute daemon heartbeat, where your recurring activity occurs

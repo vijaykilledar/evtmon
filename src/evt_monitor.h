@@ -5,8 +5,8 @@ class EventMonitor {
     public:
         virtual void operator() () {};
         virtual void handle_event() {};
-        virtual bool init() {};
-        virtual bool start() {};
+        virtual bool init() = 0;
+        virtual bool start() = 0;
         virtual ~EventMonitor() {};
 };
 
