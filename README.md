@@ -1,2 +1,2 @@
-# netevtmon
-Network Event Monitoring Daemon
+# evtmon
+Event Monitoring Daemon
