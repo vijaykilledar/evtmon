@@ -30,6 +30,7 @@ class IntfEvtMonitor: public EventMonitor {
         virtual void handle_event(){};
         virtual bool init();
         virtual bool start();
+        bool configure(Json::Value conf) {}
         static int parse_link_status_msg(const struct nlmsghdr *nlh, void *data);
         static int parse_link_attr(const struct nlattr *attr, void *data);
         bool request_link_info();

@@ -10,6 +10,7 @@ DaemonConfig& DaemonConfig::instance() {
 
 bool DaemonConfig::load_config(const char* conf_file) {
     std::ifstream infile(conf_file);
-    infile >> m_config;
+    Json::Reader reader;
+    reader.parse(infile, m_config);
     return true;
 }

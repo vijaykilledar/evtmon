@@ -25,7 +25,7 @@ void do_heartbeat() {
 }
 
 void config_daemon() {
-    json conf = DaemonConfig::instance().get_config();
+    Json::Value conf = DaemonConfig::instance().get_config();
 }
 
 int main(int argc, char *argv[]) {
