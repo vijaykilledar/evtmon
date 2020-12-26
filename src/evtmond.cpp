@@ -25,6 +25,7 @@ void do_heartbeat() {
 }
 
 void config_daemon() {
+    log(LOG::DEBUG, "%s",__FUNCTION__);
     Json::Value conf = DaemonConfig::instance().get_config();
 }
 
@@ -34,7 +35,7 @@ int main(int argc, char *argv[]) {
     bool is_daemon = true, debug_enabled = false;
     char *conf_file = nullptr;
 
-    while ((opt = getopt(argc, argv, "fhc:")) != -1) {
+    while ((opt = getopt(argc, argv, "fhdc:")) != -1) {
         switch (opt) {
             case 'f':
                 is_daemon = false;
@@ -64,7 +65,7 @@ int main(int argc, char *argv[]) {
     }
     
     if(debug_enabled) {
-                
+        Logger::instance().set_log_level(LOG::DEBUG);
     } 
     
     if (is_daemon) {

@@ -15,7 +15,7 @@ namespace Util
         char buffer [80];
         std::time(&rawtime);
         timeinfo = std::localtime(&rawtime);
-        std::strftime(buffer,80,"%Y-%m-%d-%H-%M-%S",timeinfo);
+        std::strftime(buffer,80,"%d-%m-%Y-%H:%M:%S",timeinfo);
         return buffer;
     }
 }

@@ -6,7 +6,7 @@ config.status
 configure
 depcomp
 src/.deps/
-netevtmond
+evtmond
 Makefile.in
 Makefile
 install-sh

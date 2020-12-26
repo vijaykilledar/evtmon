@@ -18,6 +18,9 @@ class Logger {
         }
         static const std::string m_priority_names[];
         void write(LOG pri,const char *, ... );
+        void set_log_level(LOG l_level) {
+            m_def_log = l_level;
+        }
     private:
         Logger() {
             m_def_log = LOG::ERROR;
