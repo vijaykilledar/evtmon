@@ -1,5 +1,5 @@
 bin_PROGRAMS = netevtmond
-netevtmond_SOURCES = src/netevtmond.cpp
+netevtmond_SOURCES = src/evtmond.cpp
 netevtmond_SOURCES += src/evt_monitor.cpp
 netevtmond_SOURCES += src/dconfig.cpp
 netevtmond_SOURCES += src/logger.cpp

@@ -1,6 +1,6 @@
 AC_PREREQ([2.68])
-AC_INIT([netevtmon], [0.0.1])
-AC_CONFIG_SRCDIR(src/netevtmond.cpp)
+AC_INIT([evtmond], [0.0.1])
+AC_CONFIG_SRCDIR(src/evtmond.cpp)
 AM_INIT_AUTOMAKE([subdir-objects 1.11 -Wall -Werror])
 AC_CONFIG_FILES([Makefile])
 
@@ -28,7 +28,7 @@ AC_DEFUN(
     ]
 )
 
-m4_divert_once([HELP_ENABLE], [netevtmond monitors:])
+m4_divert_once([HELP_ENABLE], [evtmond monitors:])
 
 AC_HOOK([netintfmon],                 [yes],      [network interface event monitoring.])
 AC_HOOK([netroutemon],                [yes],      [linux route event monitoring.])
@@ -36,7 +36,7 @@ AC_HOOK([netconntrackemon],           [yes],      [linux conntrack event monitor
 
 AC_MSG_RESULT()
 AC_MSG_RESULT([Configuration:])
-AC_MSG_RESULT([  Net Evt Monitors:])
+AC_MSG_RESULT([  Event Monitors:])
 AC_MSG_RESULT([    netintfmon . . . . . . .   $enable_netintfmon])
 AC_MSG_RESULT([    netroutemon . . . . . . .  $enable_netroutemon])
 AC_MSG_RESULT([    netconntrackemon . . . . . $enable_netconntrackemon])

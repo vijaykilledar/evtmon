@@ -12,7 +12,7 @@
 #include <vector>
 #include <thread>
 
-#include "netevtmond.h"
+#include "evtmond.h"
 #include "global.h"
 #include "dconfig.h"
 #include "intf_evt_monitor.h"
@@ -31,7 +31,7 @@ void config_daemon() {
 int main(int argc, char *argv[]) {
     
     int opt;
-    bool is_daemon = true;
+    bool is_daemon = true, debug_enabled = false;
     char *conf_file = nullptr;
 
     while ((opt = getopt(argc, argv, "fhc:")) != -1) {
@@ -42,9 +42,16 @@ int main(int argc, char *argv[]) {
             case 'c':
                 conf_file = optarg;
                 break;
+            case 'd':
+                debug_enabled = true;
+                break;
             case '?':
             case 'h':
-                fprintf(stdout,"Usage: %s \n -f\tdont fork\n-c\t config file path\n",argv[0]);
+                fprintf(stdout,"Usage: %s \n                                \
+                                 \r-f     dont fork\n                       \
+                                 \r-c     config file path\n                \
+                                 \r-d     debug log enabled\n",             \
+                                 argv[0]);
                 exit(EXIT_FAILURE);
         }
     }
@@ -52,9 +59,13 @@ int main(int argc, char *argv[]) {
     //load config
     bool config_load = config.load_config((conf_file != nullptr) ? conf_file : CONF_FILE);
     if(!config_load) {
-        syslog(LOG_ERR,"Failed to load config. Please check config file.");
+        log(LOG::ERROR, "Failed to load config. Please check config file.");
         exit(EXIT_FAILURE);
     }
+    
+    if(debug_enabled) {
+                
+    } 
     
     if (is_daemon) {
     
@@ -75,13 +86,13 @@ int main(int argc, char *argv[]) {
         umask(0);
         // Open system logs for the child process
         openlog("netevtmond", LOG_NOWAIT | LOG_PID, LOG_USER);
-        syslog(LOG_NOTICE, "Successfully started netevtmond");
+        log(LOG::INFO, "Successfully started netevtmond");
         // Generate a session ID for the child process
         sid = setsid();
         // Ensure a valid SID for the child process
         if (sid < 0) {
             // Log failure and exit
-            syslog(LOG_ERR, "Could not generate session ID for child process");
+            log(LOG::ERROR, "Could not generate session ID for child process");
 
             // If a new session ID could not be generated, we must terminate the child process
             // or it will be orphaned
@@ -90,38 +101,28 @@ int main(int argc, char *argv[]) {
 
         // Change the current working directory to a directory guaranteed to exist
         if ((chdir("/")) < 0) {
-            // Log failure and exit
-            syslog(LOG_ERR, "Could not change working directory to /");
+            log(LOG::ERROR, "Could not change working directory to /");
 
-            // If our guaranteed directory does not exist, terminate the child process to ensure
-            // the daemon has not been hijacked
             exit(EXIT_FAILURE);
         }
 
-        // A daemon cannot use the terminal, so close standard file descriptors for security reasons
         close(STDIN_FILENO);
         close(STDOUT_FILENO);
         close(STDERR_FILENO);
     }
     
-    // Daemon-specific intialization should go here
     const int SLEEP_INTERVAL = 5;
     
     config_daemon();
 
-    // Enter daemon loop
     while (1) {
-      // Execute daemon heartbeat, where your recurring activity occurs
       do_heartbeat();
 
-      // Sleep for a period of time
       sleep(SLEEP_INTERVAL);
     }
 
-    // Close system logs for the child process
     syslog(LOG_NOTICE, "Stopping netevtmond");
     closelog();
 
-    // Terminate the child process when the daemon completes
     exit(EXIT_SUCCESS);
 }

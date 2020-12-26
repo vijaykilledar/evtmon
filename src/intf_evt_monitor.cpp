@@ -105,7 +105,7 @@ int IntfEvtMonitor::parse_link_status_msg(const struct nlmsghdr *nlh, void *data
      } else {
          return MNL_CB_OK;
      }
-     LOG(logtype::DEBUG, "msg received interface %s", intf.c_str());
+     log(LOG::DEBUG, "msg received interface %s", intf.c_str());
      if(ifm->ifi_flags & IFF_RUNNING) {
      } else {
      }
