@@ -13,11 +13,14 @@ void Logger::write(LOG pri, const char  *msg, ...) {
     if(pri >= m_def_log) {
         va_list arg;
         int done;
-        char buffer[256];
+        char *buffer;
         va_start (arg, msg);
-        vsnprintf (buffer, 255, msg, arg);
-        std::string new_msg = Util::CurrentDateTime() + ":" + m_priority_names[static_cast<int>(pri)] + ": " + buffer + "\n";
-        done = fprintf (stdout, new_msg.c_str(), arg);
+        size_t sz = vasprintf (&buffer, msg, arg);
+        if(sz) {
+            std::string new_msg = Util::CurrentDateTime() + ":" + m_priority_names[static_cast<int>(pri)] + ": " + std::string(buffer) + "\n";
+            done = fprintf (stdout, new_msg.c_str(), arg);
+            free(buffer);
+        }
         va_end (arg);
     }
 }

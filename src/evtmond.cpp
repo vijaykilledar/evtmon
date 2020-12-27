@@ -18,6 +18,7 @@
 #include "intf_evt_monitor.h"
 #include "logger.h"
 
+//TODO:Need better place or handling of starting monitors
 std::map<std::string, EventMonitor *> g_evt_monitors;
 
 void do_heartbeat() {
@@ -27,6 +28,9 @@ void do_heartbeat() {
 void config_daemon() {
     log(LOG::DEBUG, "%s",__FUNCTION__);
     Json::Value conf = DaemonConfig::instance().get_config();
+    Json::FastWriter fastWriter;
+    std::string str_conf = fastWriter.write(conf);
+    log(LOG::DEBUG, "Daemon Configuration %s", str_conf.c_str());
 }
 
 int main(int argc, char *argv[]) {
