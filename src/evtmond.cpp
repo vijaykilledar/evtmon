@@ -11,26 +11,43 @@
 #include <unistd.h>
 #include <vector>
 #include <thread>
-
+#include <map>
 #include "evtmond.h"
 #include "global.h"
 #include "dconfig.h"
 #include "intf_evt_monitor.h"
 #include "logger.h"
 
-//TODO:Need better place or handling of starting monitors
-std::map<std::string, EventMonitor *> g_evt_monitors;
+/*TODO:Need better place or handling of starting monitors
+e.g Build monitor and collector as shared object and load them.
+*/
+std::map<std::string, void (*)(Json::Value)> g_evt_monitors;
+
+void init_monitors() {
+    g_evt_monitors["netintfmon"] =  &netinterface_start;
+}
+
+
 
 void do_heartbeat() {
 
 }
 
 void config_daemon() {
+    init_monitors();
     log(LOG::DEBUG, "%s",__FUNCTION__);
     Json::Value conf = DaemonConfig::instance().get_config();
     Json::FastWriter fastWriter;
     std::string str_conf = fastWriter.write(conf);
     log(LOG::DEBUG, "Daemon Configuration %s", str_conf.c_str());
+    for(int idx = 0; idx < conf["evt_monitors"].size(); idx++)
+    {
+        Json::Value monitor = conf["evt_monitors"][idx];
+        std::string monitor_name = monitor["name"].asString();
+        if(g_evt_monitors.find(monitor_name) != g_evt_monitors.end()) {
+            g_evt_monitors[monitor_name](monitor);
+        }
+    }
 }
 
 int main(int argc, char *argv[]) {

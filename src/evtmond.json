@@ -2,21 +2,25 @@
   "evt_monitors":[
       {
         "name":"netintfmon",
-        "events":[
+        "config": {
+          "events":[
             "LINK_STATUS_EVENT",
             "IP_CHANGE_EVENT",
             "ALL"
-        ],
-        "intf_filter":[
+          ],
+          "intf_filter":[
             "eth0",
             "eth1"
-        ]
+          ]
+        }
       }
     ],
-    "evt_collectors":[
+  "evt_collectors":[
       {
         "name":"file",
-        "path":"/var/tmp/evt.out"
+        "config": {
+          "path":"/var/tmp/evt.out"
+        }
       }
     ]
 }

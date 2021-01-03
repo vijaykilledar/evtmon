@@ -13,7 +13,7 @@
 #include "evt_monitor.h"
 #include "net_interface.h"
 
-void netinterface_start();
+void netinterface_start(Json::Value conf);
 
 class IntfEvtMonitor: public EventMonitor {
     private:

@@ -113,7 +113,8 @@ int IntfEvtMonitor::parse_link_status_msg(const struct nlmsghdr *nlh, void *data
      return MNL_CB_OK;
 }
 
-void netinterface_start() {
+void netinterface_start(Json::Value conf) {
+    log(LOG::DEBUG, "Starting %s", conf["name"].asString().c_str());
     IntfEvtMonitor::instance().init();
     IntfEvtMonitor::instance().start();
 }
