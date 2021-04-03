@@ -30,7 +30,7 @@ AC_DEFUN(
 
 m4_divert_once([HELP_ENABLE], [evtmond monitors:])
 
-AC_HOOK([netintfmon],                 [yes],      [network interface event monitoring.])
+AC_HOOK([netintfmon],                 [no],      [network interface event monitoring.])
 
 AC_MSG_RESULT()
 AC_MSG_RESULT([Configuration:])
