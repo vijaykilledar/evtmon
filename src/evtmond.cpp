@@ -14,9 +14,9 @@
 #include <map>
 #include "evtmond.h"
 #include "global.h"
-#include "dconfig.h"
+#include "evtmon_config.h"
 #include "intf_evt_monitor.h"
-#include "logger.h"
+#include "common/logger.h"
 
 /*TODO:Need better place or handling of starting monitors
 e.g Build monitor and collector as shared object and load them.

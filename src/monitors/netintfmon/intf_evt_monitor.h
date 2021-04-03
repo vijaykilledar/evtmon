@@ -42,4 +42,6 @@ class IntfEvtMonitor: public EventMonitor {
         }
 };
 
+#define INTF_MON IntfEvtMonitor::instance()
+
 #endif // _MONITOR_INTF_H_

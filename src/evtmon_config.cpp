@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "dconfig.h"
+#include "evtmon_config.h"
 
 DaemonConfig& DaemonConfig::instance() {
     static DaemonConfig insta;

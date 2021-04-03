@@ -94,6 +94,7 @@ int IntfEvtMonitor::parse_link_attr(const struct nlattr *attr, void *data)
 
 int IntfEvtMonitor::parse_link_status_msg(const struct nlmsghdr *nlh, void *data)
 {
+     log(LOG::DEBUG, "In %s()", __FUNCTION__);
      struct nlattr *tb[IFLA_MAX+1] = {};
      struct ifinfomsg *ifm = (struct ifinfomsg *)mnl_nlmsg_get_payload(nlh);
      mnl_attr_parse(nlh, sizeof(*ifm), IntfEvtMonitor::parse_link_attr, tb);
@@ -101,13 +102,24 @@ int IntfEvtMonitor::parse_link_status_msg(const struct nlmsghdr *nlh, void *data
      std::string intf;
      if(tb[IFLA_IFNAME]) {
          intf = mnl_attr_get_str(tb[IFLA_IFNAME]);
-         IntfEvtMonitor::instance().new_interface(intf);
+         if(INTF_MON.m_intf.find(intf) == INTF_MON.m_intf.end()) {
+            log(LOG::DEBUG, "Creating a new network interface %s", intf.c_str());
+            INTF_MON.new_interface(intf);
+         }
      } else {
          return MNL_CB_OK;
      }
-     log(LOG::DEBUG, "msg received interface %s", intf.c_str());
+
      if(ifm->ifi_flags & IFF_RUNNING) {
+         log(LOG::DEBUG, "Interface[%s] Up", intf.c_str());
+         if(INTF_MON.m_intf.find(intf) != INTF_MON.m_intf.end()) {
+            INTF_MON.m_intf[intf]->set_link_status(NetIntfStatus::up);
+         }
      } else {
+          log(LOG::DEBUG, "Interface[%s] Down", intf.c_str());
+          if(INTF_MON.m_intf.find(intf) != INTF_MON.m_intf.end()) {
+            INTF_MON.m_intf[intf]->set_link_status(NetIntfStatus::down);
+         }
      }
  
      return MNL_CB_OK;
