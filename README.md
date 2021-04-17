@@ -6,8 +6,8 @@ Monitors and collectors are written in such a way that every monitor and collect
 ![evtmond block](doc/evtmond.png?raw=true "Block Diagram")
 
 Currently only one monitor is configured and supported and that can be configured and enabled using the below way.
-
- Markup : - Bullet list
-          - Bullet list item 2 
+ 
+ 1. ./autogen.sh
+ 2. mkdir build 
 
 
