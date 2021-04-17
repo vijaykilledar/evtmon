@@ -15,6 +15,18 @@ const NetIntfStatus& NetInterface::get_link_status() {
     return m_link_status;
 }
 
+std::string NetInterface::get_link_status_to_str() {
+    std::string ret;
+    if(m_link_status == NetIntfStatus::down)
+            ret = "DOWN";
+    else if(m_link_status == NetIntfStatus::up)
+            ret = "UP";
+    else
+           ret = "INVALID";
+    
+    return ret;
+}
+
 const NetIntfStatus& NetInterface::get_link_admin_status() {
     return m_link_admin_status;
 }
@@ -31,6 +43,6 @@ void NetInterface::set_ipv4_addr(const std::string &val) {
     m_ipv4_addr = val;
 }
 
-void NetInterface::set_link_status(const NetIntfStatus &val) {
+void NetInterface::set_link_status(NetIntfStatus val) {
     m_link_status = val;
 }

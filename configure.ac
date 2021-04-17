@@ -1,8 +1,10 @@
 AC_PREREQ([2.68])
 AC_INIT([evtmond], [0.0.1])
 AC_CONFIG_SRCDIR(src/evtmond.cpp)
-AM_INIT_AUTOMAKE([subdir-objects 1.11 -Wall -Werror])
+AM_INIT_AUTOMAKE([subdir-objects 1.11 ])
 AC_CONFIG_FILES([Makefile])
+
+LT_INIT([dlopen disable-static])
 
 AC_PROG_CC
 AC_PROG_CXX

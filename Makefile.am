@@ -11,17 +11,25 @@ evtmond_SOURCES = \
 	src/common/global.h \
 	src/common/utils.h
 
+common_monitors_SOURCES = src/common/evt_monitor.cpp \
+						  src/common/evt_monitor.h
+
 evtmond_CPPFLAGS = -I$(top_srcdir)/src/common
 evtmond_CPPFLAGS += -I$(top_srcdir)/src
 
-evtmond_LDADD = -lmnl -lpthread -ljsoncpp
+evtmond_LDADD = -lmnl -lpthread -ljsoncpp -ldl
 EXTRA_DIST = autogen.sh
 
+pkglib_LTLIBRARIES = 
 if BUILD_netintfmon
-evtmond_SOURCES += \
-	src/monitors/netintfmon/intf_evt_monitor.cpp \
-	src/monitors/netintfmon/intf_evt_monitor.h \
+pkglib_LTLIBRARIES += libnetintfmon.la
+libnetintfmon_la_SOURCES = \
+	src/monitors/netintfmon/netintfmon.cpp \
+	src/monitors/netintfmon/netintfmon.h \
+	src/monitors/netintfmon/netlink_socket.cpp \
+	src/monitors/netintfmon/netlink_socket.h \
 	src/monitors/netintfmon/net_interface.cpp \
 	src/monitors/netintfmon/net_interface.h
-evtmond_CPPFLAGS += -I$(top_srcdir)/src/monitors/netintfmon/
+libnetintfmon_la_CPPFLAGS = -I$(top_srcdir)/src/monitors/netintfmon/ -I$(top_srcdir)/src/common
+libnetintfmon_la_LDFLAGS = -lmnl
 endif

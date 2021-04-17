@@ -12,40 +12,42 @@
 #include <vector>
 #include <thread>
 #include <map>
+#include <dlfcn.h>
+#include <thread>
 #include "evtmond.h"
 #include "global.h"
 #include "evtmon_config.h"
-#include "intf_evt_monitor.h"
 #include "common/logger.h"
+#include "evt_monitor.h"
 
 /*TODO:Need better place or handling of starting monitors
 e.g Build monitor and collector as shared object and load them.
 */
-std::map<std::string, void (*)(Json::Value)> g_evt_monitors;
-
-void init_monitors() {
-    g_evt_monitors["netintfmon"] =  &netinterface_start;
-}
-
-
-
+std::map<std::string, EventMonitor *> g_evt_monitors;
+std::map<std::string, std::thread> g_monitors_pool;
 void do_heartbeat() {
 
 }
 
 void config_daemon() {
-    init_monitors();
     log(LOG::DEBUG, "%s",__FUNCTION__);
     Json::Value conf = DaemonConfig::instance().get_config();
     Json::FastWriter fastWriter;
     std::string str_conf = fastWriter.write(conf);
     log(LOG::DEBUG, "Daemon Configuration %s", str_conf.c_str());
+    EventMonitor * (*create)();
     for(int idx = 0; idx < conf["evt_monitors"].size(); idx++)
     {
         Json::Value monitor = conf["evt_monitors"][idx];
         std::string monitor_name = monitor["name"].asString();
-        if(g_evt_monitors.find(monitor_name) != g_evt_monitors.end()) {
-            g_evt_monitors[monitor_name](monitor);
+        std::string soname = std::string(".libs/lib") + monitor_name + ".so";
+        void *handle = dlopen(soname.c_str(), RTLD_LAZY);
+        create = (EventMonitor * (*)())dlsym(handle, "create_monitor");
+        if(g_evt_monitors.find(monitor_name) == g_evt_monitors.end()) {
+            g_evt_monitors[monitor_name] = (EventMonitor *)create();
+            g_evt_monitors[monitor_name]->configure(monitor);
+            g_evt_monitors[monitor_name]->init();
+            g_monitors_pool[monitor_name] = std::thread(&EventMonitor::start, g_evt_monitors[monitor_name]);
         }
     }
 }
@@ -55,6 +57,7 @@ int main(int argc, char *argv[]) {
     int opt;
     bool is_daemon = true, debug_enabled = false;
     char *conf_file = nullptr;
+    EventMonitor *evtmon;
 
     while ((opt = getopt(argc, argv, "fhdc:")) != -1) {
         switch (opt) {
