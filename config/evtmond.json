@@ -14,13 +14,5 @@
           ]
         }
       }
-    ],
-  "evt_collectors":[
-      {
-        "name":"file",
-        "config": {
-          "path":"/var/tmp/evt.out"
-        }
-      }
     ]
 }
