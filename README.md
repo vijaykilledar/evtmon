@@ -7,7 +7,7 @@ Monitors and collectors are written in such a way that every monitor and collect
 
 Currently only one monitor is configured and supported and that can be configured and enabled using the below way.
 
- Markup : * ./autogen.sh
-          * mkdir build
+ Markup : - Bullet list
+          - Bullet list item 2 
 
 
