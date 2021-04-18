@@ -29,6 +29,11 @@ class NetintfMon: public EventMonitor {
         virtual bool init();
         virtual bool start();
         bool configure(Json::Value conf);
+        ~NetintfMon() {
+            for(auto intf=m_intf_map.begin(); intf != m_intf_map.end(); intf++) {
+                delete intf->second;
+            } 
+        }
 };
 
 
