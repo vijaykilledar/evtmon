@@ -1,6 +1,6 @@
 ## evtmond
 
-> :warning: ** Under Construction
+> :warning: Under Construction
 
 evtmond is a system event monitoring daemon which allows you to configure different monitors which will monitor the system events and pass it to configured collectors.
 
