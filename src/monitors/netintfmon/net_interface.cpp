@@ -1,4 +1,8 @@
 #include "net_interface.h"
+
+const std::string& NetInterface::get_mac_addr() {
+    return m_mac_addr;
+}
 const std::string& NetInterface::get_ipv4_addr() {
     return m_ipv4_addr;
 }
@@ -45,4 +49,8 @@ void NetInterface::set_ipv4_addr(const std::string &val) {
 
 void NetInterface::set_link_status(NetIntfStatus val) {
     m_link_status = val;
+}
+
+void NetInterface::set_mac_addr(const std::string &val) {
+    m_mac_addr = val;
 }

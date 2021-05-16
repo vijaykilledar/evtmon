@@ -1,18 +1,18 @@
 {
-  "evt_monitors":[
-      {
-        "name":"netintfmon",
-        "config": {
-          "events":[
-            "LINK_STATUS_EVENT",
-            "IP_CHANGE_EVENT",
-            "ALL"
-          ],
-          "intf_filter":[
-            "eth0",
-            "eth1"
-          ]
+    "monitor_location": "/usr/local/lib/evtmond/",
+    "evt_monitors": [
+        {
+            "name": "netintfmon",
+            "config": {
+                "events": [
+                    "LINK_STATUS_EVENT",
+                    "ALL"
+                ],
+                "intf_filter": [
+                    "eth0",
+                    "eth1"
+                ]
+            }
         }
-      }
     ]
 }

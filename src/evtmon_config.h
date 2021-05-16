@@ -7,9 +7,9 @@
 
 class DaemonConfig {
     private:
-        DaemonConfig() {};
-        DaemonConfig(DaemonConfig const& copy) {};
-        DaemonConfig& operator=(DaemonConfig const& copy) {};
+        DaemonConfig() = default;
+        DaemonConfig(DaemonConfig const& copy) = delete;
+        DaemonConfig& operator=(DaemonConfig const& copy) = delete;
         std::string m_conf_file;
         Json::Value m_config;
     public:

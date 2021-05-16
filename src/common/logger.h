@@ -25,8 +25,8 @@ class Logger {
         Logger() {
             m_def_log = LOG::ERROR;
         };
-        Logger(const Logger&) {};
-        Logger& operator=(const Logger&) {};
+        Logger(const Logger&) = delete;
+        Logger& operator=(const Logger&) = delete;
 };
 
 #define log(PRI, MSG, ...) Logger::instance().write(PRI, MSG,  ##__VA_ARGS__)

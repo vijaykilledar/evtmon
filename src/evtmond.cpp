@@ -19,36 +19,49 @@
 #include "evtmon_config.h"
 #include "common/logger.h"
 #include "evt_monitor.h"
+#include "event_queue.h"
+#include<stdlib.h>
 
-/*TODO:Need better place or handling of starting monitors
-e.g Build monitor and collector as shared object and load them.
-*/
 std::map<std::string, EventMonitor *> g_evt_monitors;
 std::map<std::string, std::thread> g_monitors_pool;
+std::thread g_event_proc;
+
 void do_heartbeat() {
 
 }
 
 void config_daemon() {
+    log(LOG::DEBUG,"Starting event processor");
+    EventQueue *eptr = EventQueue::get_instance2();
+    g_event_proc = std::thread(&EventQueue::processor, eptr);
+    g_event_proc.detach();
+    
     log(LOG::DEBUG, "%s",__FUNCTION__);
     Json::Value conf = DaemonConfig::instance().get_config();
     Json::FastWriter fastWriter;
     std::string str_conf = fastWriter.write(conf);
     log(LOG::DEBUG, "Daemon Configuration %s", str_conf.c_str());
     EventMonitor * (*create)();
-    for(int idx = 0; idx < conf["evt_monitors"].size(); idx++)
+    std::string monitor_location = conf["monitor_location"].asString();
+    for (int idx = 0; idx < conf["evt_monitors"].size(); idx++)
     {
         Json::Value monitor = conf["evt_monitors"][idx];
         std::string monitor_name = monitor["name"].asString();
-        std::string soname = std::string(".libs/lib") + monitor_name + ".so";
-        void *handle = dlopen(soname.c_str(), RTLD_LAZY);
-        create = (EventMonitor * (*)())dlsym(handle, "create_monitor");
-        if(g_evt_monitors.find(monitor_name) == g_evt_monitors.end()) {
-            g_evt_monitors[monitor_name] = (EventMonitor *)create();
-            g_evt_monitors[monitor_name]->configure(monitor);
-            g_evt_monitors[monitor_name]->init();
-            g_monitors_pool[monitor_name] = std::thread(&EventMonitor::start, g_evt_monitors[monitor_name]);
+        std::string soname = monitor_location + "lib" + monitor_name + ".so";
+        log(LOG::DEBUG, "Registering evt monior using:%s", soname.c_str());
+        void *handle = dlopen(soname.c_str(), RTLD_NOW);
+        if (handle != NULL) {
+            create = (EventMonitor * (*)())dlsym(handle, "create_monitor");
+            if (g_evt_monitors.find(monitor_name) == g_evt_monitors.end()) {
+                g_evt_monitors[monitor_name] = (EventMonitor *)create();
+                g_evt_monitors[monitor_name]->configure(eptr, monitor);
+                g_evt_monitors[monitor_name]->init();
+                g_monitors_pool[monitor_name] = std::thread(&EventMonitor::start, g_evt_monitors[monitor_name]);
+            }
+        } else {
+            log(LOG::ERROR,"Failed to register evt monior:%s using:%s Error:%s", monitor_name.c_str(), soname.c_str(), dlerror());
         }
+
     }
 }
 
