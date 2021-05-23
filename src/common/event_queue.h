@@ -10,7 +10,7 @@
 #include <exception>
 #include <syslog.h>
 #include <unistd.h>
-
+#include "evt_collector.h"
 
 class EventQueue {
     private:
@@ -39,12 +39,15 @@ class EventQueue {
             lock.unlock();
             cond.notify_all();
         }
-        void processor() {
+        void processor(const std::map<std::string, EventCollector *> &evt_collectors) {
             while(true) {
                 std::unique_lock<std::mutex> lock(m_mu);
                 cond.wait(lock, [this]() { return m_event_q.size() > 0; });
                 Event *e = m_event_q.front();
-                std::cout<<e->serialize()<<"\n";
+                for(auto collector =  evt_collectors.begin(); collector != evt_collectors.end(); collector++) {
+                    EventCollector *evt_collector = collector->second;
+                    evt_collector->add(e->serialize());
+                }
                 delete e;
                 m_event_q.pop();
                 lock.unlock();

@@ -184,9 +184,6 @@ bool NetintfMon::init()
     if(init_netlink()) {
         ret = dump_network_interfaces();
     }
-    for (auto intf = m_intf_map.begin(); intf != m_intf_map.end(); intf++) {
-        std::cout<<"intf - "<<intf->first<<"\n";
-    }
     return ret;
 }
 

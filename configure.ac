@@ -30,11 +30,13 @@ AC_DEFUN(
     ]
 )
 
+m4_divert_once([HELP_ENABLE], [Configuration:])
 m4_divert_once([HELP_ENABLE], [evtmond monitors:])
-
 AC_HOOK([netintfmon],                 [no],      [network interface event monitoring.])
 
-AC_MSG_RESULT()
-AC_MSG_RESULT([Configuration:])
-AC_MSG_RESULT([  Event Monitors:])
+m4_divert_once([HELP_ENABLE], [])
+m4_divert_once([HELP_ENABLE], [evtmond collectors:])
+AC_HOOK([collecttofile],                 [no],      [Dump collected event to the file.])
+
 AC_MSG_RESULT([    netintfmon . . . . . . .   $enable_netintfmon])
+AC_MSG_RESULT([    collecttotofile . . . . . . . . . .   $enable_collecttofile])

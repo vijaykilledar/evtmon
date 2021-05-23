@@ -1,5 +1,6 @@
 {
     "monitor_location": "/usr/local/lib/evtmond/",
+    "collector_location": "/usr/local/lib/evtmond/",
     "evt_monitors": [
         {
             "name": "netintfmon",
@@ -14,5 +15,14 @@
                 ]
             }
         }
+    ],
+    "evt_collectors":[
+        {
+            "name":"collecttofile",
+            "config":{
+                "path":"/home/vijay/evtmond.data"
+            }
+        } 
+    
     ]
 }

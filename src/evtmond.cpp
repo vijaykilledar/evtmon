@@ -18,12 +18,15 @@
 #include "global.h"
 #include "evtmon_config.h"
 #include "common/logger.h"
+#include "evt_collector.h"
 #include "evt_monitor.h"
 #include "event_queue.h"
 #include<stdlib.h>
 
 std::map<std::string, EventMonitor *> g_evt_monitors;
+std::map<std::string, EventCollector *> g_evt_collectors;
 std::map<std::string, std::thread> g_monitors_pool;
+std::map<std::string, std::thread> g_collectors_pool;
 std::thread g_event_proc;
 
 void do_heartbeat() {
@@ -31,16 +34,40 @@ void do_heartbeat() {
 }
 
 void config_daemon() {
-    log(LOG::DEBUG,"Starting event processor");
-    EventQueue *eptr = EventQueue::get_instance2();
-    g_event_proc = std::thread(&EventQueue::processor, eptr);
-    g_event_proc.detach();
     
     log(LOG::DEBUG, "%s",__FUNCTION__);
     Json::Value conf = DaemonConfig::instance().get_config();
     Json::FastWriter fastWriter;
     std::string str_conf = fastWriter.write(conf);
     log(LOG::DEBUG, "Daemon Configuration %s", str_conf.c_str());
+
+    EventCollector * (*create_collector)();
+    std::string collector_location = conf["collector_location"].asString();
+    for (int idx = 0; idx < conf["evt_collectors"].size(); idx++)
+    {
+        Json::Value collector = conf["evt_collectors"][idx];
+        std::string collector_name = collector["name"].asString();
+        std::string soname = collector_location + "lib" + collector_name + ".so";
+        log(LOG::DEBUG, "Registering evt collector using:%s", soname.c_str());
+        void *handle = dlopen(soname.c_str(), RTLD_NOW);
+        if (handle != NULL) {
+            create_collector = (EventCollector * (*)())dlsym(handle, "create_collector");
+            if (g_evt_collectors.find(collector_name) == g_evt_collectors.end()) {
+                g_evt_collectors[collector_name] = (EventCollector *)create_collector();
+                g_evt_collectors[collector_name]->configure(collector);
+                g_evt_collectors[collector_name]->init();
+                g_collectors_pool[collector_name] = std::thread(&EventCollector::start, g_evt_collectors[collector_name]);
+            }
+        } else {
+            log(LOG::ERROR,"Failed to register evt Collector:%s using:%s Error:%s", collector_name.c_str(), soname.c_str(), dlerror());
+        }
+    }
+
+    log(LOG::DEBUG,"Starting event processor");
+    EventQueue *eptr = EventQueue::get_instance2();
+    g_event_proc = std::thread(&EventQueue::processor, eptr, g_evt_collectors);
+    g_event_proc.detach();
+
     EventMonitor * (*create)();
     std::string monitor_location = conf["monitor_location"].asString();
     for (int idx = 0; idx < conf["evt_monitors"].size(); idx++)
@@ -63,6 +90,7 @@ void config_daemon() {
         }
 
     }
+
 }
 
 int main(int argc, char *argv[]) {

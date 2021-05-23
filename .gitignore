@@ -12,4 +12,5 @@ Makefile
 install-sh
 missing
 .dirstamp
+*.lo
 *.o
