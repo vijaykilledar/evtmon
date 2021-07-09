@@ -1,3 +1,3 @@
 #!/bin/sh
-apt-get install -y libjsoncpp libjsoncpp-dev
+sudo apt-get install -y libjsoncpp libjsoncpp-dev
 autoreconf --force --install 
